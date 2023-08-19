@@ -9,16 +9,16 @@ class ProductManager {
     readProducts = async() => {
         let products = await fs.readFile(this.path, "utf-8");
         return JSON.parse(products);
-}
+};
 
     writeProducts = async (product) => {
-    await fs.writeFile(this.path,JSON.stringify(product));
-}
+    await fs.writeFile(this.path, JSON.stringify(product));
+};
 
     exist = async (id) => {
     let products = await this.readProducts();
     return products.find(prod => prod.id === id)
-}
+};
 
     addProducts = async (product) => {
      let productsOld = await this.readProducts()
@@ -41,7 +41,12 @@ class ProductManager {
   
     updateProducts = async (id, product) => {
         let productById = await this.exist(id)
-        console.log(product)
+        if(!productById) return "Producto No Encontrado"
+        await this.deleteProducts(id)
+        let productOld = await this.readProducts()
+        let products = [{...product, id : id}, ...productOld]
+        await this.writeProducts(products)
+        return "Producto Actualizado"
     }
 
     deleteProducts = async (id) => {
@@ -53,7 +58,7 @@ class ProductManager {
             return "Producto Eliminado"
         }
         return "Producto a Eliminar Inexistente"
-    } 
+    }
 
 }
 
